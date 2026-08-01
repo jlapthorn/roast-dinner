@@ -1,0 +1,65 @@
+# Default values for roast-dinner on OpenShift.
+# SQLite is stored on a PVC — keep replicaCount at 1.
+
+replicaCount: 1
+
+image:
+  repository: image-registry.openshift-image-registry.svc:5000/roast-dinner/roast-dinner
+  tag: latest
+  pullPolicy: Always
+
+imagePullSecrets: []
+
+nameOverride: ""
+fullnameOverride: ""
+
+serviceAccount:
+  create: true
+  name: ""
+
+# Flask secret (auto-generated if empty on first install via lookup/random)
+secretKey: ""
+
+service:
+  type: ClusterIP
+  port: 8080
+
+route:
+  enabled: true
+  host: ""
+  # edge | passthrough | reencrypt
+  tlsTermination: edge
+  insecureEdgeTerminationPolicy: Redirect
+  annotations: {}
+
+persistence:
+  enabled: true
+  # Mount path inside the container (DATA_DIR)
+  mountPath: /data
+  size: 1Gi
+  accessMode: ReadWriteOnce
+  storageClass: lvms-vg1
+  existingClaim: ""
+
+resources:
+  requests:
+    cpu: 50m
+    memory: 128Mi
+  limits:
+    cpu: 500m
+    memory: 256Mi
+
+podSecurityContext: {}
+
+securityContext:
+  allowPrivilegeEscalation: false
+  capabilities:
+    drop:
+      - ALL
+  runAsNonRoot: true
+  seccompProfile:
+    type: RuntimeDefault
+
+nodeSelector: {}
+tolerations: []
+affinity: {}

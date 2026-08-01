@@ -15,6 +15,9 @@
     <a class="brand" href="{{ url_for('main.index') }}">Roast Dinner</a>
     <nav class="nav">
       <a href="{{ url_for('main.index') }}" {% if request.endpoint == 'main.index' %}aria-current="page"{% endif %}>Plan</a>
+      {% if has_saved_plan %}
+      <a href="{{ url_for('main.plan') }}" {% if request.endpoint == 'main.plan' %}aria-current="page"{% endif %}>Current</a>
+      {% endif %}
       <a href="{{ url_for('main.foods') }}" {% if request.endpoint and request.endpoint.startswith('main.food') %}aria-current="page"{% endif %}>Foods</a>
     </nav>
   </header>

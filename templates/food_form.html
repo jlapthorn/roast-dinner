@@ -4,7 +4,7 @@
 <section class="hero hero-compact">
   <p class="eyebrow">Food library</p>
   <h1>{% if food %}Edit {{ food.name }}{% else %}Add food{% endif %}</h1>
-  <p class="lede">Times are for a fan-assisted oven unless you note otherwise.</p>
+  <p class="lede">Meats use fan oven temperature and weight-based timing. Vegetables and other dishes only need a cook time.</p>
 </section>
 
 <form class="food-form" method="post" id="food-form">
@@ -32,9 +32,9 @@
     </select>
   </label>
 
-  <label class="field">
+  <label class="field meat-only">
     <span>Fan oven temperature (°C)</span>
-    <input type="number" name="temperature_c" value="{{ form.get('temperature_c', 180) }}" required min="50" max="300">
+    <input type="number" name="temperature_c" id="temperature_c" value="{{ form.get('temperature_c', 180) }}" min="50" max="300">
   </label>
 
   <div class="field-row meat-only">

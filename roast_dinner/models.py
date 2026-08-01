@@ -8,7 +8,7 @@ class Food(db.Model):
     name = db.Column(db.String(120), nullable=False, unique=True)
     category = db.Column(db.String(32), nullable=False)  # meat, vegetable, other
     meat_type = db.Column(db.String(32))  # chicken, beef, pork, lamb
-    temperature_c = db.Column(db.Integer, nullable=False)
+    temperature_c = db.Column(db.Integer)  # meats: fan oven °C; veg/other unused
     minutes_per_kg = db.Column(db.Float)  # meats: scale with weight
     base_minutes = db.Column(db.Float, default=0)  # meats: fixed add-on
     fixed_minutes = db.Column(db.Float)  # vegetables / other: fixed cook time

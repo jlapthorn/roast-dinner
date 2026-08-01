@@ -1,0 +1,11 @@
+1. Get the application URL:
+{{- if .Values.route.enabled }}
+  oc get route {{ include "roast-dinner.fullname" . }} -n {{ .Release.Namespace }} -o jsonpath='{.spec.host}{"\n"}'
+{{- else }}
+  kubectl port-forward -n {{ .Release.Namespace }} svc/{{ include "roast-dinner.fullname" . }} {{ .Values.service.port }}:{{ .Values.service.port }}
+{{- end }}
+
+SQLite database is stored on PVC "{{ include "roast-dinner.pvcName" . }}"
+mounted at {{ .Values.persistence.mountPath }} (DATA_DIR).
+
+Keep replicaCount at 1 — SQLite does not support multiple writers.

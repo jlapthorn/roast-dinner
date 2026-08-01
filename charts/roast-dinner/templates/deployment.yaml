@@ -1,0 +1,85 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "roast-dinner.fullname" . }}
+  labels:
+    {{- include "roast-dinner.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  # RWO PVC + SQLite: avoid parallel pods during rollout
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      {{- include "roast-dinner.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- include "roast-dinner.selectorLabels" . | nindent 8 }}
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ include "roast-dinner.serviceAccountName" . }}
+      {{- with .Values.podSecurityContext }}
+      securityContext:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      containers:
+        - name: roast-dinner
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          {{- with .Values.securityContext }}
+          securityContext:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          ports:
+            - name: http
+              containerPort: {{ .Values.service.port }}
+              protocol: TCP
+          env:
+            - name: DATA_DIR
+              value: {{ .Values.persistence.mountPath | quote }}
+            - name: SECRET_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "roast-dinner.fullname" . }}-app
+                  key: SECRET_KEY
+          volumeMounts:
+            {{- if .Values.persistence.enabled }}
+            - name: data
+              mountPath: {{ .Values.persistence.mountPath }}
+            {{- end }}
+          livenessProbe:
+            httpGet:
+              path: /
+              port: http
+            initialDelaySeconds: 10
+            periodSeconds: 20
+          readinessProbe:
+            httpGet:
+              path: /
+              port: http
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+      volumes:
+        {{- if .Values.persistence.enabled }}
+        - name: data
+          persistentVolumeClaim:
+            claimName: {{ include "roast-dinner.pvcName" . }}
+        {{- end }}
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}

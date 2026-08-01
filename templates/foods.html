@@ -4,7 +4,7 @@
 <section class="hero hero-compact">
   <p class="eyebrow">Kitchen cupboard</p>
   <h1>Foods</h1>
-  <p class="lede">Edit cooking times and temperatures, or add your own dishes.</p>
+  <p class="lede">Edit cooking times (and meat oven temperatures), or add your own dishes.</p>
 </section>
 
 <div class="actions top-actions">
@@ -31,7 +31,7 @@
           {% if food.meat_type %}<span class="muted"> · {{ food.meat_type }}</span>{% endif %}
         </td>
         <td data-label="Category">{{ food.category }}</td>
-        <td data-label="Temp">{{ food.temperature_c }}°C</td>
+        <td data-label="Temp">{% if food.temperature_c is not none %}{{ food.temperature_c }}°C{% else %}—{% endif %}</td>
         <td data-label="Timing">
           {% if food.category == 'meat' %}
             {{ food.minutes_per_kg|mins }}/kg + {{ food.base_minutes|mins }}

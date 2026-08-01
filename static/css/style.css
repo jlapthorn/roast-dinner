@@ -429,6 +429,40 @@ textarea:focus {
   box-shadow: 0 0 0 2px rgba(31, 58, 42, 0.2);
 }
 
+.timeline-take_out .timeline-card::before {
+  background: var(--accent-deep);
+  box-shadow: 0 0 0 2px rgba(143, 52, 18, 0.25);
+}
+
+.take-out-card {
+  border-color: rgba(184, 74, 31, 0.35);
+  background: #fff8f3;
+}
+
+.take-out-card h2 {
+  color: var(--accent-deep);
+}
+
+.muted-notes {
+  opacity: 0.9;
+}
+
+.banner-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.65rem;
+  margin: 0 0 1.25rem;
+  animation: rise 0.45s ease both;
+}
+
+.btn-danger-text {
+  color: var(--accent-deep);
+}
+
+.btn-danger-text:hover {
+  background: #f4e0d8;
+}
+
 .timeline-head {
   display: flex;
   align-items: center;

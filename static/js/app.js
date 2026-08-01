@@ -10,10 +10,7 @@
         if (input) input.required = true;
       } else {
         weight.classList.add("is-hidden");
-        if (input) {
-          input.required = false;
-          input.value = "";
-        }
+        if (input) input.required = false;
       }
     });
   }
@@ -43,6 +40,8 @@
       });
       const meatType = document.getElementById("meat_type");
       if (meatType) meatType.required = isMeat;
+      const temperature = document.getElementById("temperature_c");
+      if (temperature) temperature.required = isMeat;
     };
 
     category.addEventListener("change", sync);

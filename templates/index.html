@@ -1,18 +1,31 @@
 {% extends "base.html" %}
-{% block title %}Plan · Roast Dinner{% endblock %}
+{% block title %}{% if editing %}Edit plan{% else %}Plan{% endif %} · Roast Dinner{% endblock %}
 {% block content %}
 <section class="hero">
   <p class="eyebrow">Fan-assisted oven planner</p>
   <h1>Roast Dinner</h1>
-  <p class="lede">Tell us when you want to eat. We’ll work backwards so every dish lands together.</p>
+  <p class="lede">
+    {% if editing %}
+      Update your meal time or foods, then rebuild the plan. Your choices are kept in a browser cookie.
+    {% else %}
+      Tell us when you want to eat. We’ll work backwards so every dish lands together.
+    {% endif %}
+  </p>
 </section>
+
+{% if has_saved_plan and not editing %}
+<div class="banner-actions">
+  <a class="btn btn-primary" href="{{ url_for('main.plan') }}">View saved plan</a>
+  <a class="btn btn-ghost" href="{{ url_for('main.plan_edit') }}">Edit saved plan</a>
+</div>
+{% endif %}
 
 <form class="planner" method="post" action="{{ url_for('main.plan') }}" id="planner-form">
   <fieldset class="serve-block">
     <legend>When are you eating?</legend>
     <label class="field">
       <span>Date &amp; time</span>
-      <input type="datetime-local" name="serve_at" id="serve_at" required>
+      <input type="datetime-local" name="serve_at" id="serve_at" value="{{ serve_at_value }}" required>
     </label>
   </fieldset>
 
@@ -22,26 +35,43 @@
     {% if grouped[category] %}
       <ul class="food-pick-list">
         {% for food in grouped[category] %}
+        {% set fid = food.id|string %}
         <li class="food-pick" data-category="{{ food.category }}">
           <label class="check-row">
-            <input type="checkbox" name="food_id" value="{{ food.id }}" data-food-id="{{ food.id }}" class="food-check">
+            <input
+              type="checkbox"
+              name="food_id"
+              value="{{ food.id }}"
+              data-food-id="{{ food.id }}"
+              class="food-check"
+              {% if fid in selected_ids %}checked{% endif %}
+            >
             <span class="food-meta">
               <span class="food-name">{{ food.name }}</span>
               <span class="food-detail">
-                {{ food.temperature_c }}°C fan
                 {% if food.category == 'meat' %}
+                  {{ food.temperature_c }}°C fan
                   · {{ food.minutes_per_kg|mins }}/kg + {{ food.base_minutes|mins }}
                   {% if food.rest_minutes %} · rest {{ food.rest_minutes|mins }}{% endif %}
                 {% else %}
-                  · {{ food.fixed_minutes|mins }}
+                  {{ food.fixed_minutes|mins }} cook
                 {% endif %}
               </span>
             </span>
           </label>
           {% if food.category == 'meat' %}
-          <label class="weight-field is-hidden" data-weight-for="{{ food.id }}">
+          <label class="weight-field {% if fid not in selected_ids %}is-hidden{% endif %}" data-weight-for="{{ food.id }}">
             <span>Weight (kg)</span>
-            <input type="number" name="weight_{{ food.id }}" min="0.1" step="0.1" placeholder="e.g. 1.5" inputmode="decimal">
+            <input
+              type="number"
+              name="weight_{{ food.id }}"
+              min="0.1"
+              step="0.1"
+              placeholder="e.g. 1.5"
+              inputmode="decimal"
+              value="{{ selected_weights.get(fid, '') }}"
+              {% if fid in selected_ids %}required{% endif %}
+            >
           </label>
           {% endif %}
         </li>
@@ -54,7 +84,10 @@
   {% endfor %}
 
   <div class="actions sticky-actions">
-    <button type="submit" class="btn btn-primary">Build cooking plan</button>
+    <button type="submit" class="btn btn-primary">{% if editing %}Update cooking plan{% else %}Build cooking plan{% endif %}</button>
+    {% if editing %}
+    <a class="btn btn-ghost" href="{{ url_for('main.plan') }}">Back to plan</a>
+    {% endif %}
     <a class="btn btn-ghost" href="{{ url_for('main.foods') }}">Manage foods</a>
   </div>
 </form>

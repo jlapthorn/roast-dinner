@@ -3,7 +3,8 @@
 from roast_dinner import db
 from roast_dinner.models import Food
 
-# Times are typical fan-oven guidance — editable in the app.
+# Times are typical home-cooking guidance — editable in the app.
+# Fan oven temperature applies to meats only; vegetables/other use cook time alone.
 DEFAULT_FOODS = [
     {
         "name": "Chicken",
@@ -53,18 +54,18 @@ DEFAULT_FOODS = [
         "name": "Carrots",
         "category": "vegetable",
         "meat_type": None,
-        "temperature_c": 180,
+        "temperature_c": None,
         "minutes_per_kg": None,
         "base_minutes": 0,
         "fixed_minutes": 35,
         "rest_minutes": 0,
-        "notes": "Roast with a little oil until tender and edged with colour.",
+        "notes": "Roast or boil until tender.",
     },
     {
         "name": "Peas",
         "category": "vegetable",
         "meat_type": None,
-        "temperature_c": 100,
+        "temperature_c": None,
         "minutes_per_kg": None,
         "base_minutes": 0,
         "fixed_minutes": 4,
@@ -75,7 +76,7 @@ DEFAULT_FOODS = [
         "name": "Tenderstem broccoli",
         "category": "vegetable",
         "meat_type": None,
-        "temperature_c": 100,
+        "temperature_c": None,
         "minutes_per_kg": None,
         "base_minutes": 0,
         "fixed_minutes": 8,
@@ -86,7 +87,7 @@ DEFAULT_FOODS = [
         "name": "Broccoli",
         "category": "vegetable",
         "meat_type": None,
-        "temperature_c": 100,
+        "temperature_c": None,
         "minutes_per_kg": None,
         "base_minutes": 0,
         "fixed_minutes": 10,
@@ -97,12 +98,12 @@ DEFAULT_FOODS = [
         "name": "Yorkshire puddings",
         "category": "other",
         "meat_type": None,
-        "temperature_c": 220,
+        "temperature_c": None,
         "minutes_per_kg": None,
         "base_minutes": 0,
         "fixed_minutes": 22,
         "rest_minutes": 0,
-        "notes": "Hot tin and hot fat. Do not open the oven while they rise.",
+        "notes": "About 220°C fan. Hot tin and hot fat — do not open the oven while they rise.",
     },
 ]
 
