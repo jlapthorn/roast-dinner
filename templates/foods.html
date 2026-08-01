@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+{% block title %}Foods · Roast Dinner{% endblock %}
+{% block content %}
+<section class="hero hero-compact">
+  <p class="eyebrow">Kitchen cupboard</p>
+  <h1>Foods</h1>
+  <p class="lede">Edit cooking times and temperatures, or add your own dishes.</p>
+</section>
+
+<div class="actions top-actions">
+  <a class="btn btn-primary" href="{{ url_for('main.food_new') }}">Add food</a>
+</div>
+
+{% if foods %}
+<div class="table-wrap">
+  <table class="food-table">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Category</th>
+        <th>Temp</th>
+        <th>Timing</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for food in foods %}
+      <tr>
+        <td data-label="Name">
+          <strong>{{ food.name }}</strong>
+          {% if food.meat_type %}<span class="muted"> · {{ food.meat_type }}</span>{% endif %}
+        </td>
+        <td data-label="Category">{{ food.category }}</td>
+        <td data-label="Temp">{{ food.temperature_c }}°C</td>
+        <td data-label="Timing">
+          {% if food.category == 'meat' %}
+            {{ food.minutes_per_kg|mins }}/kg + {{ food.base_minutes|mins }}
+            {% if food.rest_minutes %} · rest {{ food.rest_minutes|mins }}{% endif %}
+          {% else %}
+            {{ food.fixed_minutes|mins }}
+          {% endif %}
+        </td>
+        <td class="row-actions">
+          <a class="btn btn-small" href="{{ url_for('main.food_edit', food_id=food.id) }}">Edit</a>
+          <form method="post" action="{{ url_for('main.food_delete', food_id=food.id) }}" class="inline-form" onsubmit="return confirm('Delete {{ food.name }}?');">
+            <button type="submit" class="btn btn-small btn-danger">Delete</button>
+          </form>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% else %}
+<p class="empty-note">No foods yet. <a href="{{ url_for('main.food_new') }}">Add your first dish</a>.</p>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+{% block title %}Your plan · Roast Dinner{% endblock %}
+{% block content %}
+<section class="hero hero-compact">
+  <p class="eyebrow">Cooking timeline</p>
+  <h1>Your plan</h1>
+  <p class="lede">
+    Serve at <strong>{{ serve_at.strftime('%A %d %B, %H:%M') }}</strong>.
+    First thing goes in at <strong>{{ earliest|hm }}</strong>.
+  </p>
+</section>
+
+<ol class="timeline">
+  {% for step in steps %}
+  <li class="timeline-item category-{{ step.category }}">
+    <div class="timeline-time">
+      <span class="time-start">{{ step.start_at|hm }}</span>
+      <span class="time-label">start</span>
+    </div>
+    <div class="timeline-card">
+      <div class="timeline-head">
+        <h2>{{ step.name }}</h2>
+        <span class="temp-pill">{{ step.temperature_c }}°C</span>
+      </div>
+      <dl class="timeline-stats">
+        <div>
+          <dt>Cook</dt>
+          <dd>{{ step.cook_minutes|mins }}</dd>
+        </div>
+        {% if step.weight_kg %}
+        <div>
+          <dt>Weight</dt>
+          <dd>{{ '%.1f'|format(step.weight_kg) }} kg</dd>
+        </div>
+        {% endif %}
+        {% if step.rest_minutes %}
+        <div>
+          <dt>Rest</dt>
+          <dd>{{ step.rest_minutes|mins }}</dd>
+        </div>
+        {% endif %}
+        <div>
+          <dt>Out</dt>
+          <dd>{{ step.oven_out_at|hm }}</dd>
+        </div>
+      </dl>
+      {% if step.notes %}
+      <p class="timeline-notes">{{ step.notes }}</p>
+      {% endif %}
+    </div>
+  </li>
+  {% endfor %}
+  <li class="timeline-item timeline-serve">
+    <div class="timeline-time">
+      <span class="time-start">{{ serve_at|hm }}</span>
+      <span class="time-label">serve</span>
+    </div>
+    <div class="timeline-card serve-card">
+      <h2>Dinner is ready</h2>
+      <p>Everything should be plated and on the table.</p>
+    </div>
+  </li>
+</ol>
+
+<div class="actions">
+  <a class="btn btn-primary" href="{{ url_for('main.index') }}">Plan another roast</a>
+</div>
+{% endblock %}

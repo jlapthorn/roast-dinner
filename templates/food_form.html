@@ -1,0 +1,75 @@
+{% extends "base.html" %}
+{% block title %}{% if food %}Edit{% else %}Add{% endif %} food · Roast Dinner{% endblock %}
+{% block content %}
+<section class="hero hero-compact">
+  <p class="eyebrow">Food library</p>
+  <h1>{% if food %}Edit {{ food.name }}{% else %}Add food{% endif %}</h1>
+  <p class="lede">Times are for a fan-assisted oven unless you note otherwise.</p>
+</section>
+
+<form class="food-form" method="post" id="food-form">
+  <label class="field">
+    <span>Name</span>
+    <input type="text" name="name" value="{{ form.get('name', '') }}" required maxlength="120">
+  </label>
+
+  <label class="field">
+    <span>Category</span>
+    <select name="category" id="category" required>
+      {% for cat in categories %}
+      <option value="{{ cat }}" {% if form.get('category') == cat %}selected{% endif %}>{{ cat|capitalize }}</option>
+      {% endfor %}
+    </select>
+  </label>
+
+  <label class="field meat-only">
+    <span>Meat type</span>
+    <select name="meat_type" id="meat_type">
+      <option value="">—</option>
+      {% for mt in meat_types %}
+      <option value="{{ mt }}" {% if form.get('meat_type') == mt %}selected{% endif %}>{{ mt|capitalize }}</option>
+      {% endfor %}
+    </select>
+  </label>
+
+  <label class="field">
+    <span>Fan oven temperature (°C)</span>
+    <input type="number" name="temperature_c" value="{{ form.get('temperature_c', 180) }}" required min="50" max="300">
+  </label>
+
+  <div class="field-row meat-only">
+    <label class="field">
+      <span>Minutes per kg</span>
+      <input type="number" name="minutes_per_kg" value="{{ form.get('minutes_per_kg', '') }}" min="0" step="1">
+    </label>
+    <label class="field">
+      <span>Base minutes</span>
+      <input type="number" name="base_minutes" value="{{ form.get('base_minutes', 0) }}" min="0" step="1">
+    </label>
+    <label class="field">
+      <span>Rest minutes</span>
+      <input type="number" name="rest_minutes" value="{{ form.get('rest_minutes', 0) }}" min="0" step="1">
+    </label>
+  </div>
+
+  <label class="field non-meat-only">
+    <span>Fixed cook minutes</span>
+    <input type="number" name="fixed_minutes" value="{{ form.get('fixed_minutes', '') }}" min="0" step="1">
+  </label>
+
+  <label class="field">
+    <span>Notes</span>
+    <textarea name="notes" rows="3">{{ form.get('notes', '') }}</textarea>
+  </label>
+
+  <div class="actions">
+    <button type="submit" class="btn btn-primary">{% if food %}Save changes{% else %}Create food{% endif %}</button>
+    <a class="btn btn-ghost" href="{{ url_for('main.foods') }}">Cancel</a>
+  </div>
+</form>
+{% endblock %}
+{% block scripts %}
+<script>
+  window.RoastDinner && window.RoastDinner.initFoodForm();
+</script>
+{% endblock %}
