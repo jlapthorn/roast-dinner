@@ -4,7 +4,7 @@
 <section class="hero hero-compact">
   <p class="eyebrow">Kitchen cupboard</p>
   <h1>Foods</h1>
-  <p class="lede">Edit cooking times (and meat oven temperatures), or add your own dishes.</p>
+  <p class="lede">Star favourites to show and select them by default on the planner.</p>
 </section>
 
 <div class="actions top-actions">
@@ -16,6 +16,7 @@
   <table class="food-table">
     <thead>
       <tr>
+        <th>Favourite</th>
         <th>Name</th>
         <th>Category</th>
         <th>Temp</th>
@@ -25,7 +26,17 @@
     </thead>
     <tbody>
       {% for food in foods %}
-      <tr>
+      <tr class="{% if food.is_favourite %}row-favourite{% endif %}">
+        <td data-label="Favourite">
+          <form method="post" action="{{ url_for('main.food_favourite', food_id=food.id) }}" class="inline-form">
+            <button
+              type="submit"
+              class="fav-toggle{% if food.is_favourite %} is-on{% endif %}"
+              title="{% if food.is_favourite %}Remove favourite{% else %}Mark favourite{% endif %}"
+              aria-label="{% if food.is_favourite %}Remove {{ food.name }} from favourites{% else %}Add {{ food.name }} to favourites{% endif %}"
+            >{% if food.is_favourite %}★{% else %}☆{% endif %}</button>
+          </form>
+        </td>
         <td data-label="Name">
           <strong>{{ food.name }}</strong>
           {% if food.meat_type %}<span class="muted"> · {{ food.meat_type }}</span>{% endif %}

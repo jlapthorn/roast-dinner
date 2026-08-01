@@ -8,7 +8,7 @@
     {% if editing %}
       Update your meal time or foods, then rebuild the plan. Your choices are kept in a browser cookie.
     {% else %}
-      Tell us when you want to eat. We’ll work backwards so every dish lands together.
+      Favourites are selected by default. Tell us when you want to eat and we’ll work backwards.
     {% endif %}
   </p>
 </section>
@@ -20,7 +20,7 @@
 </div>
 {% endif %}
 
-<form class="planner" method="post" action="{{ url_for('main.plan') }}" id="planner-form">
+<form class="planner" method="post" action="{{ url_for('main.plan') }}" id="planner-form" {% if has_favourites and not editing %}data-favourites-default="1"{% endif %}>
   <fieldset class="serve-block">
     <legend>When are you eating?</legend>
     <label class="field">
@@ -29,6 +29,13 @@
     </label>
   </fieldset>
 
+  {% if has_favourites %}
+  <div class="food-filter-bar">
+    <p class="food-filter-note">Showing favourites first{% if not editing %} (pre-selected){% endif %}.</p>
+    <button type="button" class="btn btn-ghost btn-small" id="toggle-all-foods" aria-pressed="false">Show all foods</button>
+  </div>
+  {% endif %}
+
   {% for category in categories %}
   <fieldset class="food-group" data-category="{{ category }}">
     <legend>{{ category|capitalize }}{% if category == 'other' %} <span class="legend-hint">(Yorkshires &amp; more)</span>{% endif %}</legend>
@@ -36,7 +43,11 @@
       <ul class="food-pick-list">
         {% for food in grouped[category] %}
         {% set fid = food.id|string %}
-        <li class="food-pick" data-category="{{ food.category }}">
+        <li
+          class="food-pick{% if food.is_favourite %} is-favourite{% endif %}"
+          data-category="{{ food.category }}"
+          data-favourite="{{ '1' if food.is_favourite else '0' }}"
+        >
           <label class="check-row">
             <input
               type="checkbox"
@@ -47,7 +58,10 @@
               {% if fid in selected_ids %}checked{% endif %}
             >
             <span class="food-meta">
-              <span class="food-name">{{ food.name }}</span>
+              <span class="food-name">
+                {{ food.name }}
+                {% if food.is_favourite %}<span class="fav-mark" title="Favourite" aria-label="Favourite">★</span>{% endif %}
+              </span>
               <span class="food-detail">
                 {% if food.category == 'meat' %}
                   {{ food.temperature_c }}°C fan

@@ -14,6 +14,7 @@ class Food(db.Model):
     fixed_minutes = db.Column(db.Float)  # vegetables / other: fixed cook time
     rest_minutes = db.Column(db.Float, default=0)
     notes = db.Column(db.Text, default="")
+    is_favourite = db.Column(db.Boolean, nullable=False, default=False)
 
     def cook_minutes(self, weight_kg: float | None = None) -> float:
         if self.category == "meat":
@@ -35,4 +36,5 @@ class Food(db.Model):
             "fixed_minutes": self.fixed_minutes,
             "rest_minutes": self.rest_minutes,
             "notes": self.notes or "",
+            "is_favourite": bool(self.is_favourite),
         }

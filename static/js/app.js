@@ -15,6 +15,27 @@
     });
   }
 
+  function initFoodFilter() {
+    const form = document.getElementById("planner-form");
+    const toggle = document.getElementById("toggle-all-foods");
+    if (!form || !toggle) return;
+
+    const apply = (showAll) => {
+      form.classList.toggle("hide-non-favourites", !showAll);
+      toggle.setAttribute("aria-pressed", showAll ? "true" : "false");
+      toggle.textContent = showAll ? "Show favourites only" : "Show all foods";
+    };
+
+    // Editing a saved plan may include non-favourites — show everything then.
+    const startHidden = form.dataset.favouritesDefault === "1";
+    apply(!startHidden ? true : false);
+
+    toggle.addEventListener("click", () => {
+      const showingAll = toggle.getAttribute("aria-pressed") === "true";
+      apply(!showingAll);
+    });
+  }
+
   function initPlanner() {
     const form = document.getElementById("planner-form");
     if (!form) return;
@@ -24,6 +45,7 @@
       }
     });
     toggleWeightFields();
+    initFoodFilter();
   }
 
   function initFoodForm() {

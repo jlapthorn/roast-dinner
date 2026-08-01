@@ -39,7 +39,9 @@ def create_app() -> Flask:
     with app.app_context():
         db.create_all()
         _migrate_optional_temperature()
+        _migrate_favourites()
         seed_foods()
+        _ensure_default_favourites()
 
     return app
 
@@ -68,7 +70,8 @@ def _migrate_optional_temperature() -> None:
                         base_minutes FLOAT,
                         fixed_minutes FLOAT,
                         rest_minutes FLOAT,
-                        notes TEXT
+                        notes TEXT,
+                        is_favourite BOOLEAN NOT NULL DEFAULT 0
                     )
                     """
                 )
@@ -76,10 +79,13 @@ def _migrate_optional_temperature() -> None:
             conn.execute(
                 text(
                     """
-                    INSERT INTO foods_new
+                    INSERT INTO foods_new (
+                        id, name, category, meat_type, temperature_c,
+                        minutes_per_kg, base_minutes, fixed_minutes, rest_minutes, notes, is_favourite
+                    )
                     SELECT id, name, category, meat_type,
                            CASE WHEN category = 'meat' THEN temperature_c END,
-                           minutes_per_kg, base_minutes, fixed_minutes, rest_minutes, notes
+                           minutes_per_kg, base_minutes, fixed_minutes, rest_minutes, notes, 0
                     FROM foods
                     """
                 )
@@ -108,3 +114,39 @@ def _migrate_optional_temperature() -> None:
                 )
             },
         )
+
+
+def _migrate_favourites() -> None:
+    """Add is_favourite column for existing SQLite databases."""
+    with db.engine.begin() as conn:
+        rows = conn.execute(text("PRAGMA table_info(foods)")).fetchall()
+        if not rows:
+            return
+        if any(row[1] == "is_favourite" for row in rows):
+            return
+        conn.execute(
+            text(
+                "ALTER TABLE foods ADD COLUMN is_favourite BOOLEAN NOT NULL DEFAULT 0"
+            )
+        )
+
+
+def _ensure_default_favourites() -> None:
+    """On first favourites rollout, mark a classic Sunday set if none are set."""
+    from roast_dinner.models import Food
+
+    if Food.query.filter_by(is_favourite=True).count() > 0:
+        return
+    defaults = {
+        "Chicken",
+        "Carrots",
+        "Peas",
+        "Broccoli",
+        "Yorkshire puddings",
+    }
+    updated = False
+    for food in Food.query.filter(Food.name.in_(defaults)):
+        food.is_favourite = True
+        updated = True
+    if updated:
+        db.session.commit()

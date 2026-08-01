@@ -62,6 +62,16 @@
     <textarea name="notes" rows="3">{{ form.get('notes', '') }}</textarea>
   </label>
 
+  <label class="check-field">
+    <input
+      type="checkbox"
+      name="is_favourite"
+      value="1"
+      {% if form.get('is_favourite') in (True, '1', 'on', 'true', 'yes') %}checked{% endif %}
+    >
+    <span>Favourite — show and select by default on the planner</span>
+  </label>
+
   <div class="actions">
     <button type="submit" class="btn btn-primary">{% if food %}Save changes{% else %}Create food{% endif %}</button>
     <a class="btn btn-ghost" href="{{ url_for('main.foods') }}">Cancel</a>

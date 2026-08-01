@@ -82,6 +82,7 @@ oc get route roast-dinner -n roast-dinner -o jsonpath='https://{.spec.host}{"\n"
 | `persistence.existingClaim` | `""` | Use an existing PVC instead |
 | `persistence.mountPath` | `/data` | Must match `DATA_DIR` |
 | `route.host` | `""` | Auto-generated if empty |
+| `proxyRoute.host` | `dinner.lapthorn.me` | Extra hostname for external reverse proxy |
 | `replicaCount` | `1` | Keep at 1 for SQLite |
 
 Example with a named storage class:

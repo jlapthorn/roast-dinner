@@ -463,6 +463,71 @@ textarea:focus {
   background: #f4e0d8;
 }
 
+.food-filter-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-bottom: 0.25rem;
+}
+
+.food-filter-note {
+  margin: 0;
+  color: var(--ink-soft);
+  font-size: 0.92rem;
+  font-weight: 600;
+}
+
+.planner.hide-non-favourites .food-pick[data-favourite="0"] {
+  display: none;
+}
+
+.planner.hide-non-favourites .food-group:not(:has(.food-pick[data-favourite="1"])) {
+  display: none;
+}
+
+.fav-mark {
+  color: var(--accent);
+  margin-left: 0.25rem;
+}
+
+.fav-toggle {
+  border: none;
+  background: transparent;
+  color: var(--ink-soft);
+  font-size: 1.35rem;
+  line-height: 1;
+  cursor: pointer;
+  padding: 0.15rem 0.35rem;
+  border-radius: 8px;
+}
+
+.fav-toggle.is-on,
+.fav-toggle:hover {
+  color: var(--accent);
+}
+
+.row-favourite {
+  background: rgba(255, 248, 243, 0.65);
+}
+
+.check-field {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.65rem;
+  font-weight: 600;
+  color: var(--ink-soft);
+}
+
+.check-field input {
+  width: 1.15rem;
+  height: 1.15rem;
+  margin-top: 0.15rem;
+  accent-color: var(--accent);
+  flex: none;
+}
+
 .timeline-head {
   display: flex;
   align-items: center;

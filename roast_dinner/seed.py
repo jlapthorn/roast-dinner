@@ -5,6 +5,7 @@ from roast_dinner.models import Food
 
 # Times are typical home-cooking guidance — editable in the app.
 # Fan oven temperature applies to meats only; vegetables/other use cook time alone.
+# is_favourite items are selected by default on the planner.
 DEFAULT_FOODS = [
     {
         "name": "Chicken",
@@ -16,6 +17,7 @@ DEFAULT_FOODS = [
         "fixed_minutes": None,
         "rest_minutes": 15,
         "notes": "Fan oven. Cover breast loosely with foil if browning too fast.",
+        "is_favourite": True,
     },
     {
         "name": "Beef (medium)",
@@ -27,6 +29,7 @@ DEFAULT_FOODS = [
         "fixed_minutes": None,
         "rest_minutes": 20,
         "notes": "For rare use ~40 min/kg; well done ~60 min/kg. Rest under foil.",
+        "is_favourite": False,
     },
     {
         "name": "Pork",
@@ -38,6 +41,7 @@ DEFAULT_FOODS = [
         "fixed_minutes": None,
         "rest_minutes": 15,
         "notes": "Crackling: start hot or finish uncovered. Juices should run clear.",
+        "is_favourite": False,
     },
     {
         "name": "Lamb",
@@ -49,6 +53,7 @@ DEFAULT_FOODS = [
         "fixed_minutes": None,
         "rest_minutes": 20,
         "notes": "Medium. Shorter for pink; longer for well done.",
+        "is_favourite": False,
     },
     {
         "name": "Carrots",
@@ -60,6 +65,7 @@ DEFAULT_FOODS = [
         "fixed_minutes": 35,
         "rest_minutes": 0,
         "notes": "Roast or boil until tender.",
+        "is_favourite": True,
     },
     {
         "name": "Peas",
@@ -71,6 +77,7 @@ DEFAULT_FOODS = [
         "fixed_minutes": 4,
         "rest_minutes": 0,
         "notes": "Boil or steam just before serving.",
+        "is_favourite": True,
     },
     {
         "name": "Tenderstem broccoli",
@@ -82,6 +89,7 @@ DEFAULT_FOODS = [
         "fixed_minutes": 8,
         "rest_minutes": 0,
         "notes": "Steam or boil until just tender.",
+        "is_favourite": False,
     },
     {
         "name": "Broccoli",
@@ -93,6 +101,7 @@ DEFAULT_FOODS = [
         "fixed_minutes": 10,
         "rest_minutes": 0,
         "notes": "Steam or boil florets until bright and tender.",
+        "is_favourite": True,
     },
     {
         "name": "Yorkshire puddings",
@@ -104,6 +113,7 @@ DEFAULT_FOODS = [
         "fixed_minutes": 22,
         "rest_minutes": 0,
         "notes": "About 220°C fan. Hot tin and hot fat — do not open the oven while they rise.",
+        "is_favourite": True,
     },
 ]
 

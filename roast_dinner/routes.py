@@ -43,18 +43,33 @@ def mins_filter(value: float) -> str:
 @bp.route("/")
 def index():
     foods = Food.query.order_by(Food.category, Food.name).all()
-    grouped = {cat: [f for f in foods if f.category == cat] for cat in CATEGORIES}
+    grouped = {}
+    for cat in CATEGORIES:
+        items = [f for f in foods if f.category == cat]
+        items.sort(key=lambda food: (not bool(food.is_favourite), food.name.lower()))
+        grouped[cat] = items
     draft = _get_saved_plan()
     editing = request.args.get("edit") == "1" and draft is not None
+    favourite_ids = {str(food.id) for food in foods if food.is_favourite}
+    has_favourites = bool(favourite_ids)
+    if editing:
+        selected_ids = set(draft["food_ids"])
+        selected_weights = draft["weights"]
+        serve_at_value = draft["serve_at"]
+    else:
+        selected_ids = favourite_ids
+        selected_weights = {}
+        serve_at_value = ""
     return render_template(
         "index.html",
         grouped=grouped,
         categories=CATEGORIES,
         editing=editing,
         saved_plan=draft,
-        selected_ids=set(draft["food_ids"]) if editing else set(),
-        selected_weights=draft["weights"] if editing else {},
-        serve_at_value=draft["serve_at"] if editing else "",
+        selected_ids=selected_ids,
+        selected_weights=selected_weights,
+        serve_at_value=serve_at_value,
+        has_favourites=has_favourites,
     )
 
 
@@ -128,8 +143,25 @@ def plan_pdf():
 
 @bp.route("/foods")
 def foods():
-    items = Food.query.order_by(Food.category, Food.name).all()
+    items = Food.query.order_by(
+        Food.is_favourite.desc(),
+        Food.category,
+        Food.name,
+    ).all()
     return render_template("foods.html", foods=items, categories=CATEGORIES)
+
+
+@bp.route("/foods/<int:food_id>/favourite", methods=["POST"])
+def food_favourite(food_id: int):
+    food = db.session.get(Food, food_id)
+    if food is None:
+        flash("Food not found.", "error")
+        return redirect(url_for("main.foods"))
+    food.is_favourite = not bool(food.is_favourite)
+    db.session.commit()
+    state = "favourite" if food.is_favourite else "not a favourite"
+    flash(f"{food.name} is {state}.", "success")
+    return redirect(url_for("main.foods"))
 
 
 @bp.route("/foods/new", methods=["GET", "POST"])
@@ -338,6 +370,8 @@ def _food_from_form(existing: Food | None = None) -> tuple[Food | None, str | No
     if category not in CATEGORIES:
         return None, "Choose a valid category."
 
+    is_favourite = request.form.get("is_favourite") in ("on", "1", "true", "yes")
+
     try:
         minutes_per_kg = _float_or_none(request.form.get("minutes_per_kg"))
         base_minutes = _float_or_none(request.form.get("base_minutes")) or 0
@@ -378,4 +412,5 @@ def _food_from_form(existing: Food | None = None) -> tuple[Food | None, str | No
     food.fixed_minutes = fixed_minutes
     food.rest_minutes = rest_minutes
     food.notes = notes
+    food.is_favourite = is_favourite
     return food, None

@@ -32,6 +32,15 @@ route:
   insecureEdgeTerminationPolicy: Redirect
   annotations: {}
 
+# Extra hostname for external reverse-proxy (e.g. dinner.lapthorn.me).
+# Leave tlsTermination empty when the proxy terminates TLS.
+proxyRoute:
+  enabled: true
+  host: dinner.lapthorn.me
+  tlsTermination: ""
+  insecureEdgeTerminationPolicy: Redirect
+  annotations: {}
+
 persistence:
   enabled: true
   # Mount path inside the container (DATA_DIR)

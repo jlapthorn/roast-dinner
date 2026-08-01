@@ -1,0 +1,26 @@
+{{- if and .Values.proxyRoute.enabled .Values.proxyRoute.host }}
+apiVersion: route.openshift.io/v1
+kind: Route
+metadata:
+  name: {{ include "roast-dinner.fullname" . }}-proxy
+  labels:
+    {{- include "roast-dinner.labels" . | nindent 4 }}
+  {{- with .Values.proxyRoute.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+spec:
+  host: {{ .Values.proxyRoute.host | quote }}
+  to:
+    kind: Service
+    name: {{ include "roast-dinner.fullname" . }}
+    weight: 100
+  port:
+    targetPort: http
+  {{- if .Values.proxyRoute.tlsTermination }}
+  tls:
+    termination: {{ .Values.proxyRoute.tlsTermination }}
+    insecureEdgeTerminationPolicy: {{ .Values.proxyRoute.insecureEdgeTerminationPolicy }}
+  {{- end }}
+  wildcardPolicy: None
+{{- end }}
